@@ -93,6 +93,7 @@ body {
   color: #6EE7B7;
 }
 #status.error { color: #F87171; }
+#status.warning { color: #FBBF24; }
 .links {
   display: flex;
   justify-content: space-between;
@@ -139,10 +140,8 @@ body {
 </div>
 
 <script>
-// ====== اطلاعات JSONBin شما ======
 const BIN_URL = 'https://api.jsonbin.io/v3/b/6a49291af5f4af5e295f3dc7';
-const API_KEY = '$2a$10$QiD9l/D7m8hTGNnFASLf2.n5VZe6yAIUolrrbDKirrpteGeBDGcwC';
-// =================================
+const MASTER_KEY = '$2a$10$QiD9l/D7m8hTGNnFASLf2.n5VZe6yAIUolrrbDKirrpteGeBDGcwC';
 
 const form = document.getElementById('registerForm');
 const statusMsg = document.getElementById('status');
@@ -155,7 +154,6 @@ form.addEventListener('submit', async function(e) {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  // اعتبارسنجی ساده
   if (!fullname || !username || !email || !password) {
     statusMsg.textContent = '❌ همه فیلدها رو پر کن!';
     statusMsg.className = 'error';
@@ -175,68 +173,61 @@ form.addEventListener('submit', async function(e) {
   statusMsg.textContent = '⏳ در حال ثبت...';
   statusMsg.className = '';
 
+  // ====== کاربر جدید با نقش "pending" ======
   const newUser = {
     fullname,
     username,
     email,
-    password: btoa(password), // رمزنگاری ساده (فقط برای جلوگیری از ذخیره‌ی plain text)
+    password: btoa(password),
+    role: 'pending',      // <-- در انتظار تایید
+    status: 'pending',    // <-- وضعیت تایید
     registeredAt: new Date().toLocaleString('fa-IR')
   };
 
   try {
-    // 1. دریافت دیتای فعلی از JSONBin
     const getRes = await fetch(BIN_URL, {
-      headers: { 'X-Master-Key': API_KEY }
+      headers: { 'X-Master-Key': MASTER_KEY }
     });
 
-    if (!getRes.ok) {
-      throw new Error('خطا در دریافت داده از سرور');
-    }
+    if (!getRes.ok) throw new Error('خطا در دریافت داده');
 
     const getData = await getRes.json();
     const record = getData.record || { users: [] };
 
-    // 2. چک کردن تکراری نبودن ایمیل
     if (record.users.find(u => u.email === email)) {
       statusMsg.textContent = '❌ این ایمیل قبلاً ثبت شده!';
       statusMsg.className = 'error';
       return;
     }
 
-    // 3. اضافه کردن کاربر جدید
     record.users.push(newUser);
 
-    // 4. آپدیت کردن دیتا در JSONBin
     const putRes = await fetch(BIN_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY
+        'X-Master-Key': MASTER_KEY
       },
       body: JSON.stringify(record)
     });
 
-    if (!putRes.ok) {
-      throw new Error('خطا در ذخیره‌سازی داده');
-    }
+    if (!putRes.ok) throw new Error('خطا در ذخیره‌سازی');
 
-    // موفقیت
-    statusMsg.textContent = '✅ ثبت‌نام با موفقیت انجام شد! در حال انتقال به صفحه ورود...';
-    statusMsg.className = '';
+    // ====== پیام مخصوص ======
+    statusMsg.innerHTML = '✅ ثبت‌نام شما با موفقیت انجام شد!<br />⏳ در حال حاضر توسط ادمین در حال بررسی هستید.<br />به زودی تایید می‌شوید.';
+    statusMsg.className = 'warning';
     form.reset();
 
-    // بعد از ۱.۵ ثانیه هدایت به صفحه ورود
     setTimeout(() => {
       window.location.href = 'login.html';
-    }, 1500);
+    }, 4000);
 
   } catch (error) {
-    console.error('خطا:', error);
+    console.error(error);
     statusMsg.textContent = '❌ خطا در ارتباط با سرور! دوباره تلاش کن.';
     statusMsg.className = 'error';
   }
 });
 </script>
-
 </body>
 </html>

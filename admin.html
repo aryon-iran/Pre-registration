@@ -83,7 +83,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 500px;
+  min-width: 700px;
 }
 th {
   text-align: right;
@@ -96,6 +96,7 @@ td {
   padding: 12px 20px;
   color: #CBD5E1;
   border-bottom: 1px solid rgba(255,255,255,0.03);
+  vertical-align: middle;
 }
 .badge {
   display: inline-block;
@@ -105,20 +106,86 @@ td {
   font-weight: 700;
 }
 .badge-success { background: rgba(52,211,153,0.15); color: #6EE7B7; }
-.badge-warning { background: rgba(251,191,36,0.15); color: #FBBF24; }
+.badge-admin { background: rgba(251,191,36,0.15); color: #FBBF24; }
+.badge-pending { background: rgba(251,191,36,0.15); color: #FBBF24; }
+.badge-user { background: rgba(52,211,153,0.15); color: #6EE7B7; }
 .logout-link {
   color: #F87171;
   text-decoration: none;
   font-weight: 600;
 }
 .logout-link:hover { color: #EF4444; }
+.welcome-box {
+  background: rgba(108,60,225,0.08);
+  border: 1px solid rgba(108,60,225,0.15);
+  border-radius: 16px;
+  padding: 16px 24px;
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.welcome-box span { color: #A78BFA; font-weight: 700; }
+.role-badge {
+  background: rgba(251,191,36,0.15);
+  padding: 4px 16px;
+  border-radius: 40px;
+  color: #FBBF24;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.btn-role {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: 0.2s;
+  margin: 0 3px;
+}
+.btn-role.approve {
+  background: rgba(52,211,153,0.2);
+  color: #6EE7B7;
+}
+.btn-role.approve:hover {
+  background: rgba(52,211,153,0.35);
+}
+.btn-role.make-admin {
+  background: rgba(251,191,36,0.2);
+  color: #FBBF24;
+}
+.btn-role.make-admin:hover {
+  background: rgba(251,191,36,0.35);
+}
+.btn-role.make-user {
+  background: rgba(148,163,184,0.2);
+  color: #94A3B8;
+}
+.btn-role.make-user:hover {
+  background: rgba(148,163,184,0.35);
+}
+.btn-role.delete {
+  background: rgba(248,113,113,0.2);
+  color: #F87171;
+}
+.btn-role.delete:hover {
+  background: rgba(248,113,113,0.35);
+}
 @media(max-width:640px){ .header{ padding:12px 20px; } .stats{ grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
 
 <script>
-if (!localStorage.getItem('adminLoggedIn')) window.location.href = 'login.html';
+// ====== بررسی دسترسی ادمین ======
+const userData = JSON.parse(localStorage.getItem('adminUser'));
+if (!userData || userData.role !== 'admin') {
+  window.location.href = 'index.html';
+}
+localStorage.setItem('adminLoggedIn', 'true');
 </script>
 
 <header class="header">
@@ -127,57 +194,184 @@ if (!localStorage.getItem('adminLoggedIn')) window.location.href = 'login.html';
 </header>
 
 <div class="container">
-  <h2 style="margin-bottom:4px;">📊 داشبورد</h2>
-  <p style="color:#94A3B8; margin-bottom:28px;">خلاصه وضعیت AR Game</p>
-
-  <div class="stats">
-    <div class="stat-card"><div class="num" id="userCount">۰</div><div class="label">👥 کاربران</div></div>
-    <div class="stat-card"><div class="num">۳۲</div><div class="label">🎮 بازی‌ها</div></div>
-    <div class="stat-card"><div class="num">۸۹٪</div><div class="label">⭐ رضایت</div></div>
+  <div class="welcome-box">
+    <div>
+      👋 خوش آمدی، <span id="userName">کاربر</span>
+      <span class="role-badge" style="margin-right:12px;">🔑 ادمین</span>
+    </div>
+    <div style="color:#94A3B8; font-size:0.9rem;" id="userEmail">---</div>
   </div>
 
-  <h3 class="section-title">👥 آخرین کاربران ثبت‌نامی</h3>
+  <h2 style="margin-bottom:4px;">📊 داشبورد</h2>
+  <p style="color:#94A3B8; margin-bottom:28px;">مدیریت کاربران AR Game</p>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num" id="totalUsers">۰</div><div class="label">👥 کل کاربران</div></div>
+    <div class="stat-card"><div class="num" id="pendingUsers">۰</div><div class="label">⏳ در انتظار تایید</div></div>
+    <div class="stat-card"><div class="num" id="approvedUsers">۰</div><div class="label">✅ تایید شده</div></div>
+  </div>
+
+  <h3 class="section-title">👥 مدیریت کاربران</h3>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>نام</th><th>نام کاربری</th><th>ایمیل</th><th>تاریخ</th><th>وضعیت</th></tr></thead>
+      <thead>
+        <tr>
+          <th>نام</th>
+          <th>نام کاربری</th>
+          <th>ایمیل</th>
+          <th>نقش</th>
+          <th>وضعیت</th>
+          <th>عملیات</th>
+        </tr>
+      </thead>
       <tbody id="userTable">
-        <tr><td colspan="5" style="text-align:center;color:#475569;">در حال بارگذاری...</td></tr>
+        <tr><td colspan="6" style="text-align:center;color:#475569;">در حال بارگذاری...</td></tr>
       </tbody>
     </table>
   </div>
   <div style="margin-top:24px; text-align:left;">
-    <a href="#" onclick="localStorage.removeItem('adminLoggedIn'); window.location.href='login.html';" class="logout-link">🚪 خروج از پنل</a>
+    <a href="#" onclick="localStorage.removeItem('adminLoggedIn'); localStorage.removeItem('adminUser'); window.location.href='login.html';" class="logout-link">🚪 خروج از پنل</a>
   </div>
 </div>
 
 <script>
-const BIN_URL = 'https://api.jsonbin.io/v3/b/YOUR_BIN_ID';
-const API_KEY = '$2a$10$YOUR_API_KEY';
+const BIN_ID = '6a49291af5f4af5e295f3dc7';
+const MASTER_KEY = '$2a$10$QiD9l/D7m8hTGNnFASLf2.n5VZe6yAIUolrrbDKirrpteGeBDGcwC';
 
+// نمایش اطلاعات ادمین
+if (userData) {
+  document.getElementById('userName').textContent = userData.fullname || 'ادمین';
+  document.getElementById('userEmail').textContent = userData.email || '---';
+}
+
+// ====== تابع بارگذاری کاربران ======
 async function loadUsers() {
   try {
-    const res = await fetch(BIN_URL, { headers: { 'X-Master-Key': API_KEY } });
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Access-Key': MASTER_KEY }
+    });
+    if (!res.ok) throw new Error('خطا');
     const data = await res.json();
     const users = data.record.users || [];
-    document.getElementById('userCount').textContent = users.length;
+
+    // آمار
+    document.getElementById('totalUsers').textContent = users.length;
+    const pending = users.filter(u => u.role === 'pending' || u.status === 'pending').length;
+    document.getElementById('pendingUsers').textContent = pending;
+    document.getElementById('approvedUsers').textContent = users.length - pending;
+
     const tbody = document.getElementById('userTable');
     if (!users.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#475569;">هیچ کاربری ثبت نشده</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#475569;">هیچ کاربری ثبت نشده</td></tr>';
       return;
     }
-    tbody.innerHTML = users.slice(-5).reverse().map(u => `
-      <tr>
-        <td>${u.fullname}</td>
-        <td>${u.username}</td>
-        <td>${u.email}</td>
-        <td>${u.registeredAt || '---'}</td>
-        <td><span class="badge badge-success">فعال</span></td>
-      </tr>
-    `).join('');
-  } catch {
-    document.getElementById('userTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#F87171;">خطا در بارگذاری</td></tr>';
+
+    tbody.innerHTML = users.slice().reverse().map((u, index) => {
+      const isPending = u.role === 'pending' || u.status === 'pending';
+      const roleLabel = u.role === 'admin' ? '🔑 ادمین' : 
+                        u.role === 'pending' ? '⏳ در انتظار' : '👤 کاربر';
+      const roleClass = u.role === 'admin' ? 'badge-admin' : 
+                        u.role === 'pending' ? 'badge-pending' : 'badge-user';
+      
+      return `
+        <tr>
+          <td>${u.fullname}</td>
+          <td>${u.username}</td>
+          <td>${u.email}</td>
+          <td><span class="badge ${roleClass}">${roleLabel}</span></td>
+          <td><span class="badge ${isPending ? 'badge-pending' : 'badge-success'}">${isPending ? '⏳ در انتظار' : '✅ تایید شده'}</span></td>
+          <td>
+            ${isPending ? `<button class="btn-role approve" onclick="changeRole('${u.email}', 'user')">✅ تایید</button>` : ''}
+            ${u.role !== 'admin' ? `<button class="btn-role make-admin" onclick="changeRole('${u.email}', 'admin')">👑 ادمین</button>` : ''}
+            ${u.role === 'admin' ? `<button class="btn-role make-user" onclick="changeRole('${u.email}', 'user')">👤 کاربر</button>` : ''}
+            ${u.email !== 'admin@argame.com' ? `<button class="btn-role delete" onclick="deleteUser('${u.email}')">🗑️ حذف</button>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById('userTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#F87171;">خطا در بارگذاری</td></tr>';
   }
 }
+
+// ====== تابع تغییر نقش ======
+async function changeRole(email, newRole) {
+  if (!confirm(`آیا از تغییر نقش کاربر ${email} به ${newRole} مطمئنی؟`)) return;
+
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Access-Key': MASTER_KEY }
+    });
+    const data = await res.json();
+    const users = data.record.users || [];
+
+    const userIndex = users.findIndex(u => u.email === email);
+    if (userIndex === -1) {
+      alert('کاربر پیدا نشد!');
+      return;
+    }
+
+    users[userIndex].role = newRole;
+    users[userIndex].status = newRole === 'pending' ? 'pending' : 'approved';
+
+    const putRes = await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': MASTER_KEY
+      },
+      body: JSON.stringify({ users })
+    });
+
+    if (putRes.ok) {
+      alert('✅ نقش کاربر با موفقیت تغییر کرد!');
+      loadUsers();
+    } else {
+      alert('❌ خطا در تغییر نقش!');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('❌ خطا در ارتباط با سرور!');
+  }
+}
+
+// ====== تابع حذف کاربر ======
+async function deleteUser(email) {
+  if (!confirm(`آیا از حذف کاربر ${email} مطمئنی؟ این کار قابل بازگشت نیست!`)) return;
+
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Access-Key': MASTER_KEY }
+    });
+    const data = await res.json();
+    let users = data.record.users || [];
+
+    users = users.filter(u => u.email !== email);
+
+    const putRes = await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': MASTER_KEY
+      },
+      body: JSON.stringify({ users })
+    });
+
+    if (putRes.ok) {
+      alert('✅ کاربر با موفقیت حذف شد!');
+      loadUsers();
+    } else {
+      alert('❌ خطا در حذف کاربر!');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('❌ خطا در ارتباط با سرور!');
+  }
+}
+
+// بارگذاری اولیه
 loadUsers();
 </script>
 </body>

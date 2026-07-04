@@ -90,6 +90,7 @@ body {
   color: #6EE7B7;
 }
 #status.error { color: #F87171; }
+#status.warning { color: #FBBF24; }
 .links {
   display: flex;
   justify-content: space-between;
@@ -108,7 +109,7 @@ body {
 
 <div class="card">
   <h1>✦ ورود</h1>
-  <p class="subtitle">به پنل مدیریت یا حساب کاربری خود وارد شوید</p>
+  <p class="subtitle">به حساب کاربری خود وارد شوید</p>
   <form id="loginForm">
     <div class="form-group">
       <label>ایمیل</label>
@@ -128,37 +129,78 @@ body {
 </div>
 
 <script>
-const BIN_URL = 'https://api.jsonbin.io/v3/b/YOUR_BIN_ID';
-const API_KEY = '$2a$10$YOUR_API_KEY';
+const BIN_ID = '6a49291af5f4af5e295f3dc7';
+const ACCESS_KEY = '$2a$10$QiD9l/D7m8hTGNnFASLf2.n5VZe6yAIUolrrbDKirrpteGeBDGcwC';
+
 const form = document.getElementById('loginForm');
 const statusMsg = document.getElementById('status');
 
 form.addEventListener('submit', async function(e) {
   e.preventDefault();
+
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
+
+  if (!email || !password) {
+    statusMsg.textContent = '❌ همه فیلدها رو پر کن!';
+    statusMsg.className = 'error';
+    return;
+  }
 
   statusMsg.textContent = '⏳ در حال بررسی...';
   statusMsg.className = '';
 
   try {
-    const res = await fetch(BIN_URL, { headers: { 'X-Master-Key': API_KEY } });
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Access-Key': ACCESS_KEY }
+    });
+
+    if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
+
     const data = await res.json();
     const users = data.record.users || [];
-    const user = users.find(u => u.email === email && u.password === btoa(password));
 
-    if (user) {
-      statusMsg.textContent = '✅ ورود موفق!';
+    const user = users.find(u => 
+      u.email === email && 
+      u.password === btoa(password)
+    );
+
+    if (!user) {
+      statusMsg.textContent = '❌ ایمیل یا رمز عبور اشتباه!';
+      statusMsg.className = 'error';
+      return;
+    }
+
+    // ====== بررسی وضعیت تایید ======
+    if (user.role === 'pending' || user.status === 'pending') {
+      statusMsg.innerHTML = '⏳ حساب کاربری شما هنوز توسط ادمین تایید نشده است.<br />لطفاً صبر کنید تا تایید شوید.';
+      statusMsg.className = 'warning';
+      return;
+    }
+    // =================================
+
+    // ====== ورود موفق ======
+    if (user.role === 'admin') {
+      statusMsg.textContent = '✅ ورود موفق! شما ادمین هستید.';
       statusMsg.className = '';
       localStorage.setItem('adminLoggedIn', 'true');
       localStorage.setItem('adminUser', JSON.stringify(user));
-      setTimeout(() => window.location.href = 'admin.html', 1000);
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 1000);
     } else {
-      statusMsg.textContent = '❌ ایمیل یا رمز عبور اشتباه!';
-      statusMsg.className = 'error';
+      statusMsg.textContent = '✅ ورود موفق! شما کاربر عادی هستید.';
+      statusMsg.className = '';
+      localStorage.setItem('userLoggedIn', 'true');
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1000);
     }
-  } catch {
-    statusMsg.textContent = '❌ خطا!';
+
+  } catch (error) {
+    console.error(error);
+    statusMsg.textContent = '❌ خطا در ارتباط با سرور! دوباره تلاش کن.';
     statusMsg.className = 'error';
   }
 });
