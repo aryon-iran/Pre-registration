@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>بازی‌ها | AR Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;900&display=swap" rel="stylesheet" />
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: #0B1120;
+  color: #E8EDF5;
+  min-height: 100vh;
+  direction: rtl;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 48px;
+  background: rgba(11,17,32,0.7);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  position: sticky;
+  top:0;
+  z-index:100;
+}
+.logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #A78BFA, #6C3CE1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.nav a {
+  color: #94A3B8;
+  text-decoration: none;
+  margin: 0 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+.nav a:hover { color: #A78BFA; }
+.nav a.active { color: #A78BFA; }
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 24px 60px;
+}
+.page-title {
+  font-size: 2.6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #E0E7FF, #A78BFA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.sub-desc {
+  text-align: center;
+  color: #94A3B8;
+  margin-bottom: 40px;
+  font-size: 1.05rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+.card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 24px;
+  padding: 32px 18px 24px;
+  text-align: center;
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(167,139,250,0.2);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.card .icon {
+  font-size: 3.6rem;
+  margin-bottom: 12px;
+}
+.card h3 {
+  color: #E8EDF5;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.card p {
+  color: #94A3B8;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: #475569;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  margin-top: 40px;
+}
+.footer strong { color: #A78BFA; }
+.back-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: #94A3B8;
+  text-decoration: none;
+}
+.back-link:hover { color: #A78BFA; }
+@media(max-width:640px){ .header{ padding:14px 20px; } .nav a{ margin:0 8px; font-size:0.85rem; } .page-title{ font-size:2rem; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">✦ AR Game</div>
+  <div class="nav">
+    <a href="index.html">خانه</a>
+    <a href="games.html" class="active">بازی‌ها</a>
+    <a href="register.html" class="btn-primary" style="background:linear-gradient(135deg,#6C3CE1,#4F46E5);padding:6px 22px;border-radius:40px;color:#fff;font-weight:700;text-decoration:none;">ثبت‌نام</a>
+    <a href="login.html" style="border:1.5px solid #6C3CE1;padding:6px 20px;border-radius:40px;color:#C4B5FD;text-decoration:none;">ورود</a>
+  </div>
+</header>
+
+<div class="container">
+  <h1 class="page-title">🎮 بازی‌های AR Game</h1>
+  <p class="sub-desc">همه بازی‌های محبوب و نوستالژیک رو یکجا تجربه کن</p>
+
+  <div class="grid">
+    <div class="card"><div class="icon">🎲</div><h3>منچ</h3><p>خاطره‌انگیز با قوانین جدید</p></div>
+    <div class="card"><div class="icon">🐍</div><h3>مارو پله</h3><p>نسخه مدرن با گرافیک زیبا</p></div>
+    <div class="card"><div class="icon">🃏</div><h3>پاسور</h3><p>انواع بازی‌های پاسور</p></div>
+    <div class="card"><div class="icon">🎯</div><h3>اُ‌نو</h3><p>بازی محبوب با دوستان</p></div>
+    <div class="card"><div class="icon">♟️</div><h3>شطرنج</h3><p>بازی فکری کلاسیک</p></div>
+    <div class="card"><div class="icon">🎪</div><h3>به‌زودی...</h3><p>بازی‌های جدید در راه‌اند</p></div>
+  </div>
+
+  <div style="text-align:center;margin-top:28px;">
+    <a href="index.html" class="back-link">← بازگشت به خانه</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>© ۲۰۲۶ <strong>AR Game</strong> · تمامی حقوق محفوظ است</p>
+</footer>
+</body>
+</html>

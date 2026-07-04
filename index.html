@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AR Game | صفحه اصلی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;900&display=swap" rel="stylesheet" />
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: #0B1120;
+  color: #E8EDF5;
+  min-height: 100vh;
+  direction: rtl;
+}
+/* هدر */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 48px;
+  background: rgba(11, 17, 32, 0.7);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  position: sticky;
+  top:0;
+  z-index: 100;
+}
+.logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #A78BFA, #6C3CE1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.nav a {
+  color: #94A3B8;
+  text-decoration: none;
+  margin: 0 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+.nav a:hover { color: #A78BFA; }
+.btn-outline {
+  border: 1.5px solid #6C3CE1;
+  padding: 6px 20px;
+  border-radius: 40px;
+  color: #C4B5FD !important;
+}
+.btn-outline:hover { background: #6C3CE1; color: #fff !important; }
+.btn-primary {
+  background: linear-gradient(135deg, #6C3CE1, #4F46E5);
+  padding: 6px 22px;
+  border-radius: 40px;
+  color: #fff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(108,60,225,0.3);
+}
+.btn-primary:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(108,60,225,0.5); }
+
+/* محتوای اصلی */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.hero h1 {
+  font-size: 3.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #E0E7FF, #A78BFA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+.hero .sub {
+  font-size: 1.3rem;
+  color: #94A3B8;
+  margin: 12px 0 20px;
+}
+.hero .desc {
+  color: #CBD5E1;
+  font-size: 1.05rem;
+  line-height: 2rem;
+  max-width: 650px;
+}
+.hero .highlight { color: #A78BFA; font-weight: 700; }
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  margin: 28px 0 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-hero {
+  padding: 14px 40px;
+  border-radius: 60px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+.btn-hero.primary {
+  background: linear-gradient(135deg, #6C3CE1, #4F46E5);
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(108,60,225,0.35);
+}
+.btn-hero.primary:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(108,60,225,0.5); }
+.btn-hero.secondary {
+  border: 1.5px solid #475569;
+  color: #CBD5E1;
+}
+.btn-hero.secondary:hover { border-color: #A78BFA; color: #A78BFA; }
+
+/* شمارش معکوس */
+.countdown {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin: 10px 0 6px;
+}
+.cd-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 12px 22px;
+  min-width: 72px;
+}
+.cd-item span {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #A78BFA;
+}
+.cd-item label {
+  color: #64748B;
+  font-size: 0.75rem;
+}
+.launch-date {
+  color: #A78BFA;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 6px;
+}
+
+/* فوتر */
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: #475569;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  margin-top: 20px;
+}
+.footer strong { color: #A78BFA; }
+
+/* ریسپانسیو */
+@media (max-width: 640px) {
+  .header { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
+  .nav a { margin: 0 8px; font-size: 0.85rem; }
+  .hero h1 { font-size: 2.4rem; }
+  .cd-item { padding: 8px 14px; min-width: 56px; }
+  .cd-item span { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">✦ AR Game</div>
+  <div class="nav">
+    <a href="index.html">خانه</a>
+    <a href="games.html">بازی‌ها</a>
+    <a href="register.html" class="btn-primary">ثبت‌نام</a>
+    <a href="login.html" class="btn-outline">ورود</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>AR Game</h1>
+  <p class="sub">دنیای بازی‌های نوستالژیک در گوشی تو</p>
+  <p class="desc">
+    <span class="highlight">منچ</span> · <span class="highlight">مارو پله</span> 🐍 · 
+    <span class="highlight">اُ‌نو</span> · <span class="highlight">پاسور</span> ♣️♦️🃏
+    <br />
+    همه رو یکجا با دوستات یا به‌صورت رندوم بازی کن!
+  </p>
+  <div class="hero-btns">
+    <a href="register.html" class="btn-hero primary">🚀 ثبت‌نام کن</a>
+    <a href="games.html" class="btn-hero secondary">مشاهده بازی‌ها</a>
+  </div>
+
+  <div class="countdown">
+    <div class="cd-item"><span id="days">00</span><label>روز</label></div>
+    <div class="cd-item"><span id="hours">00</span><label>ساعت</label></div>
+    <div class="cd-item"><span id="minutes">00</span><label>دقیقه</label></div>
+    <div class="cd-item"><span id="seconds">00</span><label>ثانیه</label></div>
+  </div>
+  <p class="launch-date">🎯 افتتاح بزرگ: ۳۰ تیر ۱۴۰۵</p>
+</section>
+
+<footer class="footer">
+  <p>© ۲۰۲۶ <strong>AR Game</strong> · تمامی حقوق محفوظ است</p>
+</footer>
+
+<script>
+function updateCountdown() {
+  const target = new Date('2026-07-21T00:00:00');
+  const now = new Date();
+  let diff = target - now;
+  if (diff < 0) diff = 0;
+  const d = Math.floor(diff / (1000*60*60*24));
+  const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const s = Math.floor((diff % (1000*60)) / 1000);
+  document.getElementById('days').textContent = String(d).padStart(2,'0');
+  document.getElementById('hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('minutes').textContent = String(m).padStart(2,'0');
+  document.getElementById('seconds').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
